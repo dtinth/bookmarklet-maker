@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Hello!</title>
+    <title>Bookmarklet maker</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,19 +10,22 @@
     <link rel="stylesheet" href="/style.css">
   </head>  
   <body>
-    <h1>Bookmarklet</h1>
+    <h1>Bookmarklet maker</h1>
 
     <div id="ok" hidden class="mb-4">
       <div class="card">
         <div class="card-header">
-          Install Bookmarklet
+          Install the <strong class="js-title"></strong> bookmarklet
         </div>
         <div class="card-body">
           <p class="lead">
             Drag this bookmarklet to your bookmarks bar:
           </p>
-          <p class="mb-0">
-            <a id="bookmarklet" class="btn btn-primary btn-lg" href="javascript:">Bookmarklet</a>
+          <p>
+            <a id="bookmarklet" class="btn btn-primary btn-lg js-title" href="javascript:">Bookmarklet</a>
+          </p>
+          <p class="mb-0 text-danger">
+            Only install bookmarklets from the source you trust.
           </p>
         </div>
         <div class="card-footer text-muted">
@@ -32,7 +35,7 @@
     </div>
 
     <details id="edit">
-      <summary>Edit code</summary>
+      <summary>View/edit code</summary>
       <p>
         <label for="title">Title:</label>
         <input id="title">
@@ -48,7 +51,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script>
       function onchange() {
-        $('#bookmarklet').text($('#title').val()).attr('href', `javascript:${encodeURIComponent($('#code').val())}`)
+        $('.js-title').text($('#title').val())
+        $('#bookmarklet').attr('href', `javascript:${encodeURIComponent($('#code').val())}`)
         $('#ok').get(0).hidden = !$('#title').val() || !$('#code').val()
         $('#permalink').attr('href', location.href.replace(/$|#[^]*$/, '#state=' + base64Encode(JSON.stringify({
           code: $('#code').val(),
