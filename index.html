@@ -5,21 +5,58 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css">
   </head>  
   <body>
     <h1>Bookmarklet</h1>
 
-    <p>
-      Drag this bookmarklet to 
-    </p>
+    <div id="ok" hidden>
+      <p>
+        Drag this bookmarklet to your bookmarks bar:
+      </p>
+      <p>
+        <a id="bookmarklet" class="btn btn-primary text-large" href="javascript:">Bookmarklet</a>
+      </p>
+      <a id="permalink"></a>
+    </div>
 
-    <p>
-      <label for="code">JS Code:</label>
-      <textarea id="code"></textarea>
-    </p>
+    <details open id="edit">
+      <summary>Edit</summary>
+      <p>
+        <label for="title">Title:</label>
+        <input id="title">
+      </p>
+      <p>
+        <label for="code">JS Code:</label>
+        <textarea id="code">void (() =&gt; {
+
+})()</textarea>
+      </p>
+    </details>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+      function onchange() {
+        $('#bookmarklet').text($('#title').val()).attr('href', `javascript:${encodeURIComponent($('#code').val())}`)
+        $('#ok').get(0).hidden = !$('#title').val() || !$('#code').val()
+      }
+      $('#title, #code').change(onchange)
+      var m = window.hash.match(/state=([^&]+)/)
+      function base64Encode(str) {
+        return window.btoa(unescape(encodeURIComponent( str )));
+      }
+      function base64Decode(str) {
+        return decodeURIComponent(escape(window.atob( str )));
+      }
+      onchange()
+      if (m) {
+        var state = JSON.parse(base64Decode(m[1]))
+        $('#title').val(state.title)
+        $('#code').val(state.code)
+      }
+    </script>
 
     <!-- include the Glitch button to show what the webpage is about and
           to make it easier for folks to view source and remix -->
