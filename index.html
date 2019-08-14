@@ -12,18 +12,27 @@
   <body>
     <h1>Bookmarklet</h1>
 
-    <div id="ok" hidden>
-      <p>
-        Drag this bookmarklet to your bookmarks bar:
-      </p>
-      <p>
-        <a id="bookmarklet" class="btn btn-primary text-large" href="javascript:">Bookmarklet</a>
-      </p>
-      <a id="permalink"></a>
+    <div id="ok" hidden class="mb-4">
+      <div class="card">
+        <div class="card-header">
+          Install Bookmarklet
+        </div>
+        <div class="card-body">
+          <p class="lead">
+            Drag this bookmarklet to your bookmarks bar:
+          </p>
+          <p class="mb-0">
+            <a id="bookmarklet" class="btn btn-primary btn-lg" href="javascript:">Bookmarklet</a>
+          </p>
+        </div>
+        <div class="card-footer text-muted">
+          <a id="permalink" href="#">Permalink to this page</a>
+        </div>
+      </div>
     </div>
 
-    <details open id="edit">
-      <summary>Edit</summary>
+    <details id="edit">
+      <summary>Edit code</summary>
       <p>
         <label for="title">Title:</label>
         <input id="title">
@@ -41,20 +50,29 @@
       function onchange() {
         $('#bookmarklet').text($('#title').val()).attr('href', `javascript:${encodeURIComponent($('#code').val())}`)
         $('#ok').get(0).hidden = !$('#title').val() || !$('#code').val()
+        $('#permalink').attr('href', location.href.replace(/$|#[^]*$/, '#state=' + base64Encode(JSON.stringify({
+          code: $('#code').val(),
+          title: $('#title').val(),
+        }))))
       }
       $('#title, #code').change(onchange)
-      var m = window.hash.match(/state=([^&]+)/)
+      var m = location.hash.match(/state=([^&]+)/)
       function base64Encode(str) {
         return window.btoa(unescape(encodeURIComponent( str )));
       }
       function base64Decode(str) {
         return decodeURIComponent(escape(window.atob( str )));
       }
-      onchange()
       if (m) {
-        var state = JSON.parse(base64Decode(m[1]))
-        $('#title').val(state.title)
-        $('#code').val(state.code)
+        try {
+          var state = JSON.parse(base64Decode(m[1]))
+          $('#title').val(state.title)
+          $('#code').val(state.code)
+        } catch (e) { console.error(e) }
+      }
+      onchange()
+      if ($('#ok').get(0).hidden) {
+        $('#edit').get(0).open = true
       }
     </script>
 
